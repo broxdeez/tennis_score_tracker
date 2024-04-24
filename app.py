@@ -1,7 +1,8 @@
+from datetime import datetime
+
 import pandas as pd
 import streamlit as st
 from supabase import create_client
-from datetime import datetime
 
 st.title("Score Tracker 🎾")
 st.caption("Enter scores separated by a space. e.g. 6 4 4 6 7 5")
@@ -62,7 +63,9 @@ def list_to_dataframe(lst):
     return df
 
 
-for row in rows.data:
-
+for idx, row in enumerate(rows.data):
     st.markdown(f"""`{row["dt"]}`""")
     st.dataframe(list_to_dataframe(row["score"]))
+    if st.button("Delete", key=idx):
+        supabase.table("score_tracker").delete().eq("id", row["id"]).execute()
+        st.rerun()
