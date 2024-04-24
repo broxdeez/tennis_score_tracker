@@ -69,3 +69,23 @@ for idx, row in enumerate(rows.data):
     if st.button("Delete", key=idx):
         supabase.table("score_tracker").delete().eq("id", row["id"]).execute()
         st.rerun()
+
+    # modal to update the score
+    container = st.container()
+    dialog = st.dialog("dialog_key_simplest_example")
+    with dialog:
+        st.write("### Enter updated score below:")
+        upt_score = st.text_input("New Score:")
+        upt_score = [int(x) for x in upt_score.split()]
+        submitted = st.form_submit_button("Submit")
+        if submitted:
+            (
+                supabase.table("score_tracker")
+                .update({"score": upt_score})
+                .eq("id", row["id"])
+                .execute()
+            )
+            dialog.close()
+
+    if st.button("Update", key="first_dialog_alert_button"):
+        dialog.open()
